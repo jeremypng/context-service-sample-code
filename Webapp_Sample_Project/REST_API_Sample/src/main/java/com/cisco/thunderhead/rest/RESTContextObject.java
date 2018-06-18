@@ -21,6 +21,7 @@ public class RESTContextObject {
     @ExposeMember private String type;
     @ExposeMember private UUID customerId;
     @ExposeMember private UUID parentId;
+    @ExposeMember private UUID mediaType;
     @ExposeMember private List<String> fieldsets = new LinkedList<String>();
     @ExposeMember private List<ContextDataElement> dataElements = new ArrayList<>();
     @ExposeMember private RFC3339Date created;
@@ -37,6 +38,8 @@ public class RESTContextObject {
         type = bean.getType();
         customerId = bean.getCustomerId();
         parentId = bean.getParentId();
+        mediaType = bean.getMediaType();
+
         for (DataElement dataElement : bean.getDataElements()) {
             ContextDataElement contextDataElement = new ContextDataElement(
                     dataElement.getDataKey(),
@@ -128,6 +131,7 @@ public class RESTContextObject {
         dest.setCustomerId(src.customerId);
         dest.setCreated(src.getCreated());
         dest.setLastUpdated(src.getLastUpdated());
+        dest.setMediaType(src.mediaType);
         dest.setFieldsets(src.getFieldsets());
         dest.setId(src.getId());
         Map<String,Object> dataElements = new HashMap<>();
