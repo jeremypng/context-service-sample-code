@@ -5,6 +5,7 @@ import com.cisco.thunderhead.DataElement;
 import com.cisco.thunderhead.ExposeMember;
 import com.cisco.thunderhead.util.DataElementUtils;
 import com.cisco.thunderhead.util.RFC3339Date;
+import com.cisco.thunderhead.datatypes.PodMediaType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -126,11 +127,15 @@ public class RESTContextObject {
         if (!dest.getType().equals(src.getType())) {
             throw new ContextException("Object types do not match");
         }
-
+        if (!PodMediaType.isValidType(src.mediaType)) {
+            throw new ContextException("Media type is invalid");
+        }
+        
         dest.setParentId(src.parentId);
         dest.setCustomerId(src.customerId);
         dest.setCreated(src.getCreated());
         dest.setLastUpdated(src.getLastUpdated());
+        
         dest.setMediaType(src.mediaType);
         dest.setFieldsets(src.getFieldsets());
         dest.setId(src.getId());
