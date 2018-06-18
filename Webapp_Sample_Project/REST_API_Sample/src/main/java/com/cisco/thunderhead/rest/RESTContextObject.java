@@ -21,7 +21,7 @@ public class RESTContextObject {
     @ExposeMember private String type;
     @ExposeMember private UUID customerId;
     @ExposeMember private UUID parentId;
-    @ExposeMember private UUID mediaType;
+    @ExposeMember private String mediaType;
     @ExposeMember private List<String> fieldsets = new LinkedList<String>();
     @ExposeMember private List<ContextDataElement> dataElements = new ArrayList<>();
     @ExposeMember private RFC3339Date created;
