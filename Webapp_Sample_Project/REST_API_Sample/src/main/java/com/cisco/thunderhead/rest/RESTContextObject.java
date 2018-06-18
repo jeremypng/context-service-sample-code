@@ -127,7 +127,7 @@ public class RESTContextObject {
         if (!dest.getType().equals(src.getType())) {
             throw new ContextException("Object types do not match");
         }
-        if (!PodMediaType.isValidType(src.mediaType)) {
+        if (src.getType()=="pod" && !PodMediaType.isValidType(src.mediaType)) {
             throw new ContextException("Media type is invalid");
         }
         
