@@ -157,6 +157,8 @@ public class ContextService {
             case ContextObject.Types.POD:
             case ContextObject.Types.CUSTOMER:
             case ContextObject.Types.DETAIL:
+            case "detail.comment":
+            case "detail.feedback":
                 return;
         }
 
