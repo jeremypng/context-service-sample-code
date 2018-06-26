@@ -6,6 +6,7 @@ import com.cisco.thunderhead.ExposeMember;
 import com.cisco.thunderhead.util.DataElementUtils;
 import com.cisco.thunderhead.util.RFC3339Date;
 import com.cisco.thunderhead.datatypes.PodMediaType;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -131,12 +132,21 @@ public class RESTContextObject {
             throw new ContextException("Media type is invalid");
         }
         
-        dest.setParentId(src.parentId);
-        dest.setCustomerId(src.customerId);
-        dest.setCreated(src.getCreated());
-        dest.setLastUpdated(src.getLastUpdated());
-        
-        dest.setMediaType(src.mediaType);
+        if (src.getParentId() != null && StringUtils.isNotBlank(src.getParentId())) {
+            dest.setParentId(src.parentId);
+        }
+        if (src.getCustomerId() != null && StringUtils.isNotBlank(src.getCustomerId())){
+            dest.setCustomerId(src.customerId);
+        }
+        if (src.getCreated() != null && StringUtils.isNotBlank(src.getCreated())) {
+            dest.setCreated(src.getCreated());
+        }
+        if (src.getLastUpdated() != null && StringUtils.isNotBlank(src.getLastUpdated())) {
+            dest.setLastUpdated(src.getLastUpdated());
+        }
+        if (src.getMediaType() != null && StringUtils.isNotBlank(src.getMediaType())) {
+            dest.setMediaType(src.mediaType);
+        }     
         dest.setFieldsets(src.getFieldsets());
         dest.setId(src.getId());
         Map<String,Object> dataElements = new HashMap<>();
