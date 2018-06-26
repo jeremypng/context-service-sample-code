@@ -132,16 +132,16 @@ public class RESTContextObject {
             throw new ContextException("Media type is invalid");
         }
         
-        if (src.getParentId() != null && StringUtils.isNotBlank(src.getParentId())) {
+        if (src.getParentId() != null) {
             dest.setParentId(src.getParentId());
         }
-        if (src.getCustomerId() != null && StringUtils.isNotBlank(src.getCustomerId())){
+        if (src.getCustomerId() != null){
             dest.setCustomerId(src.getCustomerId());
         }
-        if (src.getCreated() != null && StringUtils.isNotBlank(src.getCreated())) {
+        if (src.getCreated() != null) {
             dest.setCreated(src.getCreated());
         }
-        if (src.getLastUpdated() != null && StringUtils.isNotBlank(src.getLastUpdated())) {
+        if (src.getLastUpdated() != null) {
             dest.setLastUpdated(src.getLastUpdated());
         }
         if (src.mediaType != null && StringUtils.isNotBlank(src.mediaType)) {
