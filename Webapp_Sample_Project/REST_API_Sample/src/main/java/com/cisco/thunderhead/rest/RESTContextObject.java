@@ -133,10 +133,10 @@ public class RESTContextObject {
         }
         
         if (src.getParentId() != null && StringUtils.isNotBlank(src.getParentId())) {
-            dest.setParentId(src.getParentId());
+            dest.setParentId(src.parentId);
         }
         if (src.getCustomerId() != null && StringUtils.isNotBlank(src.getCustomerId())){
-            dest.setCustomerId(src.getCustomerId());
+            dest.setCustomerId(src.customerId);
         }
         if (src.getCreated() != null && StringUtils.isNotBlank(src.getCreated())) {
             dest.setCreated(src.getCreated());
@@ -144,7 +144,7 @@ public class RESTContextObject {
         if (src.getLastUpdated() != null && StringUtils.isNotBlank(src.getLastUpdated())) {
             dest.setLastUpdated(src.getLastUpdated());
         }
-        if (src.mediaType != null && StringUtils.isNotBlank(src.mediaType)) {
+        if (src.getMediaType() != null && StringUtils.isNotBlank(src.getMediaType())) {
             dest.setMediaType(src.mediaType);
         }     
         dest.setFieldsets(src.getFieldsets());
