@@ -168,7 +168,7 @@ public class ContextService {
 
     private static void validateType(String type, RESTContextObject restContextObject) throws ContextException {
         validateType(type);
-        if (StringUtils.isNotBlank(restContextObject.getType()) && StringUtils.equals(type, restContextObject.getType())) {
+        if (!(StringUtils.isNotBlank(restContextObject.getType()) && StringUtils.equals(type, restContextObject.getType()))) {
             throw new ContextException("context object type '" + restContextObject.getType() + "' does not match expected type '" + type + "'");
         }
     }
