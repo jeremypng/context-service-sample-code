@@ -23,7 +23,7 @@ This project requires:
 * Tomcat 8.x
 
 ## Getting Started
-This procedure is for Mac OS and Linux. Windows users should use Bash or Cygwin to follow this procedure.
+This procedure is for Mac OS and Linux. Windows users should use Git Bash to follow this procedure.
 
 To set up sample code components:
 
@@ -45,6 +45,8 @@ To set up sample code components:
 
 
   This installs the Context Service SDK in your project and configures your connector.properties file.
+  
+>You can connect to Context Service through a proxy by adding `System.setProperty("contextservice.proxyURL", "http://<proxy_host>:<port_number>");` to the `getInitializedContextServiceClient()` and `getInitializedManagementConnector()` methods in Utils.java.
 
 5. Change to the context-service-sample-code root directory, then run:
 
@@ -70,7 +72,7 @@ To set up sample code components:
 
    `./prepareTomcat.sh ~/Downloads/apache-tomcat-8.5.16.tar.gz ~/connectiondata.properties`
 
-   This configures each Tomcat instance containing the `connection.info.file` to point to a file that will store the connection data string.
+   This configures each Tomcat instance containing the `connection.info.file` to point to the file you are using to store the connection data string.
 
 8. Start the Tomcat instances:
 
@@ -101,7 +103,7 @@ The Management Connector webapp is crucial to ensuring your application runs wit
 
 The sample Management Connector webapp writes the connection data file to a plain text file as specified by the environment variable `connection.info.file` on the local filesystem. A more secure solution is outside the scope of this sample.
 
-If you already have a connection data string, you can put it into the file in this format:
+If you already have a connection data string, you can enter it into the file in this format:
 
 ```
 connection.data=YOUR_CONNECTION_DATA_STRING_HERE
@@ -112,42 +114,131 @@ connection.data=YOUR_CONNECTION_DATA_STRING_HERE
 ### Prerequisites
 Before running the REST API Examples, you must:
 
-* Use the Management Connector to successfully register with Context Service
-* Store the connection data string to the file specified by the `connection.info.file` property
+* Use the Management Connector to successfully register with Context Service.
+* Store the connection data string to the file specified by the `connection.info.file` property.
 
 These examples can be run with a REST client such as Postman.
 
 ### Create Context Service Object
-The `type` field must be one of `pod` (activity), `customer`, or `request`.
+
+URL Syntax:
+```
+POST http://localhost:8080/rest
+```
+
+The `type` field must be one of `pod` (activity), `customer`, `request`, or `detail`. The `detail` type can also use the subtypes `detail.comment` and `detail.feedback`.
  
 Use the `fieldsets` parameter to assign fieldsets to an object. Each object must have at least one fieldset assigned to it.
 
-The items in `dataElements` must be from fields in the fieldsets assigned to the object.
 
+Use the `dataElements` array to add field information to an object. `dataElements` is an array of objects that contain the `key`, `value`, and `type` properties. The `key` property contains the field name as a string. The `value` property contains the field value. The `type` property contains the Context Service field data type as a string. 
+
+| Type Name in Cisco Webex Control Hub | Context Service Field Data Type |
+|------|------|
+| Toggle | boolean |
+| Decimal | double |
+| Number | integer | 
+| Short Text | string |
+
+The items in the `dataElements` array must be fields from the fieldsets assigned to the object.
 
 Each type of object in Context Service has different association restrictions:
 
  * `pod`—You can optionally associate a `pod` with a customer or a request. You can also associate a `pod` with a customer and a request. Enter the `id` value of a `customer` type object in the `customerId` parameter. Enter the `id` value of a `request` type object in the `parentId` parameter.
  * `customer`—You cannot associate a `customer` with another type of Context Service object.
  * `request`—You must associate a `request` with a customer. Enter the `id` value of a `customer` type object in the `customerId` parameter.
+ * `detail`—You must associate a `detail` with either a request or an activity. Enter the `id` value of either a `request` or an `activity` type object in the `parentId` parameter.
  
 ![](https://pubhub.devnetcloud.com/media/context-service/docs/cs-sdk-guide/images/ContextObjectAssociations.png)
 
-The example below demonstrates how to create an activity. The type must be `pod` to create an activity.
+>Activity type objects can also use the optional `mediaType` parameter to set the activity mediaType. Valid values are `chat`, `email`, `event`, `mobile`, `social`, `video`, `voice`, or `web`.
+
+This example demonstrates how to create an activity. The type must be `pod` to create an activity:
 
 ```
 POST http://localhost:8080/rest
 {
-	"type" : "pod",
-	"fieldsets": ["cisco.base.pod"],
-	"dataElements": [
+    "type" : "pod",
+    "mediaType" : "chat",
+    "fieldsets": ["cisco.base.pod"],
+    "dataElements": [
         {
             "key": "Context_Notes",
-            "value": "testing at 3:16"
+            "value": "testing at 3:16",
+            "type": "string"
         }
     ]
 }
 ```
+
+This example demonstrates how to create a request:
+```
+POST http://localhost:8080/rest
+{
+    "type" : "request",
+    "customerId" : "<your-customerId-value>",
+    "fieldsets": ["cisco.base.request"],
+    "dataElements": [
+        {
+            "key": "Context_Description",
+            "value": "Test description",
+            "type": "string"
+        }
+    ]
+}
+```
+
+This example demonstrates how to create an activity with a custom boolean field:
+```
+POST http://localhost:8080/rest
+{
+    "type" : "pod",
+    "mediaType" : "chat",
+    "fieldsets": ["<your-custom-fieldset>"],
+    "dataElements": [
+        {
+            "key": "<your-custom-field>",
+            "value": true,
+            "type": "boolean"
+        }
+    ]
+}
+```
+
+This example demonstrates how to create an activity with a custom integer field:
+```
+POST http://localhost:8080/rest
+{
+    "type" : "pod",
+    "mediaType" : "chat",
+    "fieldsets": ["<your-custom-fieldset>"],
+    "dataElements": [
+        {
+            "key": "<your-custom-field>",
+            "value": 123,
+            "type": "integer"
+        }
+    ]
+}
+```
+
+This example demonstrates how to create an activity with a custom double field:
+```
+POST http://localhost:8080/rest
+{
+    "type" : "pod",
+    "mediaType" : "chat",
+    "fieldsets": ["<your-custom-fieldset>"],
+    "dataElements": [
+        {
+            "key": "<your-custom-field>",
+            "value": 123.4,
+            "type": "double"
+        }
+    ]
+}
+```
+
 
 ### Get Context Service Object
 Returns a single context object by ID.
@@ -157,13 +248,14 @@ URL Syntax:
 GET http://localhost:8080/rest/<type>/<your-id>
 ```
 
-The \<type\> in the URL must be one of `pod`, `customer`, or `request`.
+The \<type\> in the URL must be one of `pod`, `customer`, `request`, or `detail`. The `detail` type can also use the subtypes `detail.comment` and `detail.feedback`.
 
 Example response:
 ```
 {
     "id": "<your-id>",
     "type": "pod",
+    "mediaType: "voice",
     "fieldsets": [
         "cisco.base.pod"
     ],
@@ -191,9 +283,9 @@ URL syntax:
 PUT http://localhost:8080/rest/<type>/<your-id>
 ```
 
-The \<type\> in the URL must be one of `pod`, `customer`, or `request`.
+The \<type\> in the URL must be one of `pod`, `customer`, `request`, or `detail`. The `detail` type can also use the subtypes `detail.comment` and `detail.feedback`.
 
->You cannot update `request` type objects that have their `state` set to `closed`.
+>You cannot update closed `request` type objects. Context Service automatically closes each request 5 days after the last update on the request or any activities associated with the request. `detail` type objects are automatically created closed and cannot be updated.
 
 For example:
 ```
@@ -204,7 +296,8 @@ PUT http://localhost:8080/rest/pod/<your-id>
 	"dataElements": [
         {
             "key": "Context_Notes",
-            "value": "testing at 4:25"
+            "value": "testing at 4:25",
+            "type": "string"
         }
     ],
     "lastUpdated": {
@@ -222,7 +315,7 @@ URL Syntax:
 DELETE http://localhost:8080/rest/<type>/<your-id>
 ```
 
-The \<type\> in the URL must be one of `pod`, `customer`, or `request`.
+The \<type\> in the URL must be one of `pod`, `customer`, `request`, or `detail`. The `detail` type can also use the subtypes `detail.comment` and `detail.feedback`.
 
 ### Search
 The "operation" field can be "or" or "and".
@@ -234,7 +327,7 @@ URL syntax:
 POST http://localhost:8080/rest/search/<type>
 ```
 
-The \<type\> in the URL must be one of `pod`, `customer`, or `request`.
+The \<type\> in the URL must be one of `pod`, `customer`, `request`, or `detail`. The `detail` type can also use the subtypes `detail.comment` and `detail.feedback`.
 
 This example shows searching for a `pod` (activity):
 
