@@ -159,7 +159,6 @@ public class ContextService {
             case ContextObject.Types.DETAIL:
             case "detail.comment":
             case "detail.feedback":
-            case "workitem":
                 return;
         }
 
